@@ -1,28 +1,23 @@
-from tkinter import Tk,Canvas,LAST
+from tkinter import Tk,Canvas,LAST,Frame,Button,LEFT,RIGHT, NO, NONE, GROOVE
+from components.frames import (ToolLeft, TopFrame, BottomFrame,
+                             InforNodeRight,CanvasFrame,CreateStyle)
 from lib.Node import Node 
-#from tkinter.ttk import *
-#import tkinter
 
-class MainPage:
-    _window = Tk()
-    _window.title("thuật toán tối ưu")
-    _window.geometry("800x600")
-
+class MainPage():
     def __init__(self):
+        self._window = Tk()
+        self._window.title("thuật toán tối ưu")
+        self._window.geometry("1000x800")
+        
         self.main_window(self._window)
 
+        self._window.mainloop()
+
     def main_window(self,window):
-        canvas = Canvas(window,width=600,height=600)
-        canvas.pack()
-        Node("","",canvas,10,10,30,"white","D")
+        CreateStyle(self._window)
 
-        canvas.create_line(10+15, 10+30, 30+15, 80, arrow=LAST)
-        Node("","",canvas,30,80,30,"white","E")
-
-        canvas.create_line(30+15, 80+30, 50+15, 160, arrow=LAST)
-        Node("","",canvas,50,160,30,"white","F")
-
-
-        canvas.grid(column = 0, row = 0)
-
-        window.mainloop()
+        TopFrame(self._window)
+        BottomFrame(self._window)
+        ToolLeft(self._window)
+        CanvasFrame(self._window)
+        InforNodeRight(self._window)
