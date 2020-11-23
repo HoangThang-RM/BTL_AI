@@ -1,0 +1,6 @@
+GREY = "#f5f5f5"
+DARKGREY ="#e4e4e4"
+WHITE = "#ffffff"
+BGWHITE = "bgWhite.TFrame"
+BGGREY = "bgGrey.TFrame"
+BGDARKGREY = "bgDarkGrey.TFrame"
