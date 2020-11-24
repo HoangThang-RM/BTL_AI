@@ -1,4 +1,5 @@
 from tkinter.ttk import Style
+from tkinter import Text
 from components.frames.config import GREY,WHITE,DARKGREY,BGWHITE,BGGREY,BGDARKGREY
 
 class CreateStyle():
@@ -12,7 +13,7 @@ class CreateStyle():
         self.style.configure('TFrame', background = GREY)
         self.style.configure(BGWHITE, background=WHITE)
         self.style.configure(BGDARKGREY, background=DARKGREY)
-
+        
         self.parent.option_add('*Label.bg', 'red')        
         self.parent.option_add('*TCombobox*Listbox.selectBackground', 'yellow')
         self.parent.option_add('*TCombobox*Listbox.selectForeground', 'black')

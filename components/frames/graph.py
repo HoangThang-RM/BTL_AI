@@ -9,7 +9,7 @@ from lib.global_variable import set_variable,get_variable
 class GraphFrame(Frame):
     def __init__(self, parent):
         Frame.__init__(self, parent,style=BGWHITE,relief=GROOVE, borderwidth=1)
-        self.parent = parent
+        self._parent = parent
         self.__initUI()
 
     def __initUI(self):
@@ -17,15 +17,15 @@ class GraphFrame(Frame):
         #label = Label(self,text="Đồ thị", pady=10,bg=WHITE ,font="Arial 18 bold")
         #label.pack(fill=BOTH)
 
-        self.canvas = Canvas(self,bg=WHITE,bd=0, highlightthickness=0)
-        self.canvas.pack(fill="both", expand=True, padx=5, pady=5)
-
+        self._canvas = Canvas(self,bg=WHITE,bd=0, highlightthickness=0)
+        self._canvas.pack(fill="both", expand=True, padx=5, pady=5)
+        
         nodeList = get_variable("nodeList")
         
-        A = Node(self.canvas,"A",300,None,200,10,30)
-        B = Node(self.canvas,"B",100,A,150,60,30)
-        C = Node(self.canvas,"C",200,A,250,60,30)
-        D = Node(self.canvas,"D",500,C,300,120,30)
+        A = Node(self._canvas,"A",300,None,200,10,30)
+        B = Node(self._canvas,"B",100,A,150,60,30)
+        C = Node(self._canvas,"C",200,A,250,60,30)
+        D = Node(self._canvas,"D",500,C,300,120,30)
         
         A.add_child(B,30)
         A.add_child(C,10)
