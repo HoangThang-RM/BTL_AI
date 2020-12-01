@@ -35,8 +35,7 @@ class Node():
 
     def clicked(self):
         inforFrame = get_variable("inforFrame")
-        print(self._nameNode)
-        inforFrame.edit(self)
+        inforFrame.target_node(self)
 
     def add_child(self,node,cost):
         x1 = self._x + self._diameter/2

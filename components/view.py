@@ -1,5 +1,5 @@
 from tkinter import Tk,Canvas,LAST,Frame,Button,LEFT,RIGHT, NO, NONE, GROOVE
-from components.frames import (bottom,top,temp,graph,inforNode,style,tool)
+from components.frames import (bottom,top,graph,inforNode,style,tool)
 from lib.global_variable import set_variable,get_variable
 from lib.Node import Node 
 
@@ -16,7 +16,6 @@ class MainPage():
     def main_window(self,window):
         style.CreateStyle(self._window)
         
-        #temp.TopFrame(self._window)
         top.TopFrame(self._window)
         bottom.BottomFrame(self._window)
         tool.ToolLeft(self._window)

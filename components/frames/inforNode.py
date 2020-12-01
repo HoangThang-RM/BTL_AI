@@ -38,10 +38,15 @@ class InforNodeRight(Frame):
         Label(self.titleFrame, text="Tên điểm", width="10", bg=GREY).grid(column=0, row=0, padx=5,pady=5)
         Label(self.titleFrame, text="Chỉ số H", width="10", bg=GREY).grid(column=1, row=0, padx=5,pady=5)
     
-    def edit(self,node):
-        self.target = node
+    def target_node(self,node):
         self.listChild = [] #giai phong bo nho childNode
         
+        #highlight node
+        if(self.target != {}):
+            self.target._canvas.itemconfig(self.target._oval, outline="black")
+        node._canvas.itemconfig(node._oval, outline="red")
+        self.target = node
+
         #infor Node
         self.varName.set(self.target._nameNode)
         self.varHeuristic.set(self.target._heuristic)
