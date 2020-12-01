@@ -3,7 +3,8 @@ def init_global_variable():
     GLOBALS_DICT = {}
     GLOBALS_DICT["target"] = {}
     GLOBALS_DICT["nodeList"] = []
-    
+    GLOBALS_DICT["toolTarget"] = None
+
 def set_variable(name, value):
     try:
         GLOBALS_DICT[name] = value
