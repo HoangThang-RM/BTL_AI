@@ -19,13 +19,12 @@ class Node():
         self._txtOval =  self._canvas.create_text(x+diameter/2,y+diameter/2,text=nameNode,font="TkDefaultFont 10 bold")
         self._txtHeuristic = self._canvas.create_text(x + diameter + 5, y - 5,text = self._heuristic,fill="blue")
         
-        self._canvas.tag_bind(self._oval,'<ButtonRelease>', lambda event: self.clicked())
-        self._canvas.tag_bind(self._txtOval,'<ButtonRelease>', lambda event: self.clicked())
+        self._canvas.tag_bind(self._oval,'<ButtonRelease-1>', lambda event: self.clicked())
+        self._canvas.tag_bind(self._txtOval,'<ButtonRelease-1>', lambda event: self.clicked())
         self._canvas.tag_bind(self._oval, "<Enter>", lambda event: self.check_hand_enter())
         self._canvas.tag_bind(self._txtOval, "<Enter>", lambda event: self.check_hand_enter())
         self._canvas.tag_bind(self._oval, "<Leave>", lambda event: self.check_hand_leave())
         self._canvas.tag_bind(self._txtOval, "<Leave>", lambda event: self.check_hand_leave())
-
 
     def check_hand_enter(self):
         self._canvas.config(cursor="hand2")
@@ -37,6 +36,25 @@ class Node():
         properties = get_variable("properties")
         properties.target_node(self)
 
+
+    def edit_node(self,name = None,heuristic = None, child = None):
+        if(name != None):
+            self._nameNode = name
+            self._canvas.itemconfig(self._txtOval, text=name)
+        
+        if(heuristic != None):
+            self._heuristic = heuristic
+            self._canvas.itemconfig(self._txtHeuristic, text=heuristic)
+        
+        if(child != None):
+            for item in self._childNodes:
+                if(item.get("Node") == child.get("Node")):
+                    item["g"] = child.get("g")
+                    self._canvas.itemconfig(item.get("txtCost"), txt = child.get("g"))
+                    break
+    
+    # ============================== Child Node  ============================== #
+    
     def add_child(self,node,cost):
         x1 = self._x + self._diameter/2
         y1 = self._y + self._diameter/2
@@ -67,20 +85,19 @@ class Node():
                 self._childNodes.remove(item)
                 return
 
-    def edit_node(self,name = None,heuristic = None, child = None):
-        if(name != None):
-            self._nameNode = name
-            self._canvas.itemconfig(self._txtOval, text=name)
-        
-        if(heuristic != None):
-            self._heuristic = heuristic
-            self._canvas.itemconfig(self._txtHeuristic, text=heuristic)
-        
-        if(child != None):
-            for item in self._childNodes:
-                if(item.get("Node") == child.get("Node")):
-                    item["g"] = child.get("g")
-                    self._canvas.itemconfig(item.get("txtCost"), txt = child.get("g"))
-                    break
+    
+    def select(self, event):
+        widget = event.widget                       # Get handle to canvas 
+        # Convert screen coordinates to canvas coordinates
+        xc = widget.canvasx(event.x); yc = widget.canvasx(event.y)
+        self.item = widget.find_closest(xc, yc)[0]        # ID for closest
+        self.previous = (xc, yc)
+        print((xc, yc, self.item))
+
+    def drag(self, event):
+        widget = event.widget
+        xc = widget.canvasx(event.x); yc = widget.canvasx(event.y)
+        self._canvas.move(self, xc-self.previous[0], yc-self.previous[1])
+        self.previous = (xc, yc)
             
                 

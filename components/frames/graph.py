@@ -20,7 +20,10 @@ class GraphFrame(Frame):
         self._canvas = Canvas(self,bg=WHITE,bd=0, highlightthickness=0)
         self._canvas.pack(fill="both", expand=True, padx=5, pady=5)
         
+        self.item = None
+        self.previous = (0,0)
         self._canvas.bind('<Button-1>',self.mouse_event)
+        self._canvas.bind('<B1-Motion>',self.drag)
 
         nodeList = get_variable("nodeList")
         
@@ -38,6 +41,8 @@ class GraphFrame(Frame):
 
         nodeList = [A,B,C,D]
         set_variable("nodeList",nodeList)
+    
+    # ============================== MOUSE MOVE ============================== #
 
     def mouse_event(self,e):
         CREATENODE = "create-node"
@@ -50,6 +55,36 @@ class GraphFrame(Frame):
             self.create_node(e)
             return
         
+        if(nameTool == CURSOR):
+            nodeList = get_variable("nodeList")
+
+            #check position
+            x = e.x
+            y = e.y
+            self.previous = (x,y)
+            for node in nodeList:
+                iX = node._x
+                iY = node._y
+                if( x >= iX and x <= iX + 30 and y >= iY and y <= iY + 30):
+                    self.item = node
+                    return
+            self.item = None
+            
+        
+    def drag(self, event):
+        if(self.item == None):
+            return
+        widget = event.widget
+        xc = widget.canvasx(event.x) - self.previous[0]
+        yc = widget.canvasx(event.y) - self.previous[1]
+
+        self._canvas.move(self.item._oval, xc, yc)
+        self._canvas.move(self.item._txtOval, xc, yc)
+        self._canvas.move(self.item._txtHeuristic, xc, yc)
+
+        self.item._x = self.item._x + xc
+        self.item._y = self.item._y + yc
+        self.previous = (xc + self.previous[0], yc + self.previous[1])
 
     def create_node(self,e):
         nodeList = get_variable("nodeList")
