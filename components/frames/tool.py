@@ -15,9 +15,8 @@ class ToolLeft(Frame):
     def __initUI(self):
         self.pack(side=LEFT,fill="y")
         cursor = Tool(self,'cursor','cursor-32.png')
-        set_variable('toolTarget',cursor)
         cursor.target_tool()
-        Tool(self,'creat-node','circle-32.png')
+        Tool(self,'create-node','circle-32.png')
         Tool(self,'relationship','up-arrow-32.png')
         
 class Tool(Frame):
@@ -47,7 +46,6 @@ class Tool(Frame):
 
     def target_tool(self,e = None):
         toolTarget = get_variable('toolTarget')
-        print(toolTarget)
         if(toolTarget != None):
             toolTarget.config(relief = FLAT)
         self.config(relief = GROOVE)

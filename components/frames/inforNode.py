@@ -18,16 +18,16 @@ class InforNodeRight(Frame):
 
         self.varName = StringVar()
         Label(self, text="Tên điểm", bg=GREY).pack(padx=20, pady=(20,10))
-        entName = Entry(self, textvariable = self.varName)
-        entName.pack(padx=20)
-        entName.bind("<Return>", lambda event : self.target.edit_node(name = self.varName.get()))
+        self._entName = Entry(self, textvariable = self.varName)
+        self._entName.pack(padx=20)
+        self._entName.bind("<Return>", self.edit_name)
 
 
         self.varHeuristic = StringVar()
         Label(self, text="giá trị đỉnh", bg=GREY).pack(padx=20, pady=(20,10))
-        entHeuristic = Entry(self, textvariable = self.varHeuristic)
-        entHeuristic.pack(padx=20)
-        entHeuristic.bind("<Return>", lambda event : self.target.edit_node(heuristic = self.varHeuristic.get()))
+        self._entHeuristic = Entry(self, textvariable = self.varHeuristic)
+        self._entHeuristic.pack(padx=20)
+        self._entHeuristic.bind("<Return>", self.edit_heuristic)
 
         Label(self, text="Danh sách điểm con", bg=GREY).pack(padx=20, pady=(30,5))
         self.childFrame = Frame(self, width="160", heigh="50", relief=GROOVE, borderwidth=1)
@@ -38,9 +38,43 @@ class InforNodeRight(Frame):
         Label(self.titleFrame, text="Tên điểm", width="10", bg=GREY).grid(column=0, row=0, padx=5,pady=5)
         Label(self.titleFrame, text="Chỉ số H", width="10", bg=GREY).grid(column=1, row=0, padx=5,pady=5)
     
+    def edit_name(self,e):
+        nameNode = self.varName.get() 
+        
+        if(self.target == {}):
+            return
+        
+        nodeList = get_variable("nodeList")
+        for item in nodeList:
+            if(item._nameNode.lower() == nameNode.lower()):
+                self._entName.config(highlightthickness=1,highlightcolor="red")
+                return
+                
+        self.target.edit_node(name = nameNode)
+        self._entHeuristic.focus()
+
+    def edit_heuristic(self,e):
+        if(self.target == {}):
+            return
+        heuristicNode = self.varHeuristic.get()
+        try:
+            int(heuristicNode)
+            self.target.edit_node(heuristic = heuristicNode)
+            self.focus()
+            return
+        except Exception:
+            self._entHeuristic.config(highlightthickness=1,highlightcolor="red")
+            return
+    
+    def focus_name(self):
+        self._entName.focus()
+
     def target_node(self,node):
         self.listChild = [] #giai phong bo nho childNode
-        
+        self._entHeuristic.config(highlightthickness=0,highlightcolor="black")
+        self._entName.config(highlightthickness=0,highlightcolor="black")
+        self._entName.focus()
+
         #highlight node
         if(self.target != {}):
             self.target._canvas.itemconfig(self.target._oval, outline="black")

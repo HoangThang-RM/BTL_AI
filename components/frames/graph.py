@@ -20,6 +20,8 @@ class GraphFrame(Frame):
         self._canvas = Canvas(self,bg=WHITE,bd=0, highlightthickness=0)
         self._canvas.pack(fill="both", expand=True, padx=5, pady=5)
         
+        self._canvas.bind('<Button-1>',self.mouse_event)
+
         nodeList = get_variable("nodeList")
         
         A = Node(self._canvas,"A",300,None,200,10,30)
@@ -35,3 +37,35 @@ class GraphFrame(Frame):
         #C._childNodes = [{"Node":D,"g":50}]
 
         nodeList = [A,B,C,D]
+        set_variable("nodeList",nodeList)
+
+    def mouse_event(self,e):
+        CREATENODE = "create-node"
+        CURSOR = "cursor"
+        RELATIONSHIP = "relationship"
+
+        nameTool = get_variable("toolTarget")._nameTool
+
+        if(nameTool == CREATENODE):
+            self.create_node(e)
+            return
+        
+
+    def create_node(self,e):
+        nodeList = get_variable("nodeList")
+        inforNode = get_variable("inforFrame")
+
+        #check position
+        x = e.x
+        y = e.y
+        for item in nodeList:
+            iX = item._x
+            iY = item._y
+            if( x > iX - 20 and x < iX + 50 and y > iY - 20 and y < iY + 50):
+                return
+        
+        #create new node
+        newNode = Node(self._canvas,"",0,None,x-15,y-15,30)
+        nodeList.append(newNode)
+        inforNode.target_node(newNode)
+        inforNode.focus_name()

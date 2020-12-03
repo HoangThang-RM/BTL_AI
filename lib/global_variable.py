@@ -1,9 +1,9 @@
 def init_global_variable():
     global GLOBALS_DICT
     GLOBALS_DICT = {}
-    GLOBALS_DICT["target"] = {}
     GLOBALS_DICT["nodeList"] = []
     GLOBALS_DICT["toolTarget"] = None
+    GLOBALS_DICT["inforFrame"] = None
 
 def set_variable(name, value):
     try:
