@@ -53,7 +53,7 @@ class GraphFrame(Frame):
 
     def create_node(self,e):
         nodeList = get_variable("nodeList")
-        inforNode = get_variable("inforFrame")
+        properties = get_variable("properties")
 
         #check position
         x = e.x
@@ -67,5 +67,5 @@ class GraphFrame(Frame):
         #create new node
         newNode = Node(self._canvas,"",0,None,x-15,y-15,30)
         nodeList.append(newNode)
-        inforNode.target_node(newNode)
-        inforNode.focus_name()
+        properties.target_node(newNode)
+        properties.focus_name()

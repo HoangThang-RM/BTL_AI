@@ -3,7 +3,7 @@ def init_global_variable():
     GLOBALS_DICT = {}
     GLOBALS_DICT["nodeList"] = []
     GLOBALS_DICT["toolTarget"] = None
-    GLOBALS_DICT["inforFrame"] = None
+    GLOBALS_DICT["properties"] = None
 
 def set_variable(name, value):
     try:

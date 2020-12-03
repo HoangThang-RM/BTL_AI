@@ -34,8 +34,8 @@ class Node():
         self._canvas.config(cursor="")
 
     def clicked(self):
-        inforFrame = get_variable("inforFrame")
-        inforFrame.target_node(self)
+        properties = get_variable("properties")
+        properties.target_node(self)
 
     def add_child(self,node,cost):
         x1 = self._x + self._diameter/2

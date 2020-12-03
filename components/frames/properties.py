@@ -5,7 +5,7 @@ from tkinter.ttk import Style, Combobox, Frame
 from components.frames.config import GREY
 from lib.global_variable import set_variable,get_variable
 
-class InforNodeRight(Frame):
+class Properties(Frame):
     def __init__(self, parent, target = {}):
         Frame.__init__(self, parent,width="200", relief=GROOVE, borderwidth=1)
         self.parent = parent
@@ -96,9 +96,9 @@ class InforNodeRight(Frame):
         
         #show childs
         for item in node._childNodes:
-            self.listChild.append(childNode(self.childFrame, item.get("Node"), item.get("g")))
+            self.listChild.append(ChildNode(self.childFrame, item.get("Node"), item.get("g")))
 
-class childNode(Frame):
+class ChildNode(Frame):
     def __init__(self,parent,node,cost):
         Frame.__init__(self, parent)
         self._parent = parent

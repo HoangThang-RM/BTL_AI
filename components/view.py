@@ -1,5 +1,5 @@
 from tkinter import Tk,Canvas,LAST,Frame,Button,LEFT,RIGHT, NO, NONE, GROOVE
-from components.frames import (bottom,top,graph,inforNode,style,tool)
+from components.frames import (bottom,top,graph,properties,style,tool)
 from lib.global_variable import set_variable,get_variable
 from lib.Node import Node 
 
@@ -20,6 +20,6 @@ class MainPage():
         bottom.BottomFrame(self._window)
         tool.ToolLeft(self._window)
         graph.GraphFrame(self._window)
-        infor = inforNode.InforNodeRight(self._window)
+        ppts = properties.Properties(self._window)
 
-        set_variable("inforFrame",infor)
+        set_variable("properties",ppts)
