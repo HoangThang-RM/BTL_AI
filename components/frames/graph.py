@@ -2,7 +2,7 @@ from tkinter import (Button, Label, Entry, LabelFrame, StringVar, messagebox, Ca
                      Listbox,OptionMenu, scrolledtext,ttk)
 from tkinter import Tk, END, LEFT, RIGHT, TOP, BOTTOM,CENTER, BOTH, RAISED, GROOVE
 from tkinter.ttk import Style, Combobox, Frame
-from lib.Node import Node
+from lib.node import Node
 from components.frames.config import BGWHITE, WHITE
 from lib.global_variable import set_variable,get_variable
 
@@ -24,7 +24,7 @@ class GraphFrame(Frame):
         self.previous = (0,0)
         self._canvas.bind('<Button-1>',self.mouse_event)
         self._canvas.bind('<B1-Motion>',self.drag)
-
+        self._canvas.bind('<ButtonRelease-1>',self.end_drag)
         nodeList = get_variable("nodeList")
         
         A = Node(self._canvas,"A",300,None,200,10,30)
@@ -42,7 +42,7 @@ class GraphFrame(Frame):
         nodeList = [A,B,C,D]
         set_variable("nodeList",nodeList)
     
-    # ============================== MOUSE MOVE ============================== #
+    # ============================== MOUSE EVENT ============================== #
 
     def mouse_event(self,e):
         CREATENODE = "create-node"
@@ -74,6 +74,7 @@ class GraphFrame(Frame):
     def drag(self, event):
         if(self.item == None):
             return
+
         widget = event.widget
         xc = widget.canvasx(event.x) - self.previous[0]
         yc = widget.canvasx(event.y) - self.previous[1]
@@ -81,10 +82,14 @@ class GraphFrame(Frame):
         self._canvas.move(self.item._oval, xc, yc)
         self._canvas.move(self.item._txtOval, xc, yc)
         self._canvas.move(self.item._txtHeuristic, xc, yc)
+        self.item.drag_arrow(xc,yc)
 
         self.item._x = self.item._x + xc
         self.item._y = self.item._y + yc
         self.previous = (xc + self.previous[0], yc + self.previous[1])
+
+    def end_drag(self,event):
+        self.item = None
 
     def create_node(self,e):
         nodeList = get_variable("nodeList")

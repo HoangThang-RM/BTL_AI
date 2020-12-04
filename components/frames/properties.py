@@ -96,7 +96,7 @@ class Properties(Frame):
         
         #show childs
         for item in node._childNodes:
-            self.listChild.append(ChildNode(self.childFrame, item.get("Node"), item.get("g")))
+            self.listChild.append(ChildNode(self.childFrame, item.get("Node"), item.get("cost")))
 
 class ChildNode(Frame):
     def __init__(self,parent,node,cost):

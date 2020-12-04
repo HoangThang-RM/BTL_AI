@@ -1,7 +1,7 @@
 from tkinter import Tk,Canvas,LAST,Frame,Button,LEFT,RIGHT, NO, NONE, GROOVE
 from components.frames import (bottom,top,graph,properties,style,tool)
 from lib.global_variable import set_variable,get_variable
-from lib.Node import Node 
+from lib.node import Node 
 
 class MainPage():
     def __init__(self):

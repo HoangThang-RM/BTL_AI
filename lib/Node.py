@@ -1,5 +1,6 @@
 from tkinter import Label,LAST
 from lib.global_variable import get_variable
+from lib.intersection import ClosestIntersection
 
 class Node():
     def __init__(self,canvas,nameNode,heuristic,parentNodes,x,y,diameter,color="white"):
@@ -49,34 +50,45 @@ class Node():
         if(child != None):
             for item in self._childNodes:
                 if(item.get("Node") == child.get("Node")):
-                    item["g"] = child.get("g")
-                    self._canvas.itemconfig(item.get("txtCost"), txt = child.get("g"))
+                    item["cost"] = child.get("cost")
+                    self._canvas.itemconfig(item.get("txtCost"), txt = child.get("cost"))
                     break
     
     # ============================== Child Node  ============================== #
     
     def add_child(self,node,cost):
-        x1 = self._x + self._diameter/2
-        y1 = self._y + self._diameter/2
-        x2 = node._x + node._diameter/2
-        y2 = node._y
+        coorParent = (self._x,self._y)
+        coorChild = (node._x,node._y)
+        arrow, txtCost = self.create_arrow(coorParent,coorChild,cost)
+
+        #add to chilNodes
+        child = {"Node":node,"cost":cost,"arrow":arrow,"txtCost":txtCost}   
+        self._childNodes.append(child)
+
+    def create_arrow(self,coorParent,coorChild,cost): 
+        #coordinates of the center of the circle
+        radius = self._diameter/2
+        x1 = coorParent[0] + radius
+        y1 = coorParent[1] + radius
+        x2 = coorChild[0] + radius
+        y2 = coorChild[1] + radius
+        pointStart = ClosestIntersection(x1,y1,radius,(x2,y2),(x1,y1))
+        pointEnd = ClosestIntersection(x2,y2,radius,(x1,y1),(x2,y2))
         #draw diagonal arrows
-        arrow = self._canvas.create_line(x1,y1,x2,y2,arrow = LAST, width="2")
+        arrow = self._canvas.create_line(pointStart[0],pointStart[1],pointEnd[0],pointEnd[1],arrow = LAST)
         self._canvas.tag_lower(arrow)
         
         #show cost
-        xCost = int((x1+x2)/2)
-        if(x1 > x2):
+        xCost = int((pointStart[0]+pointEnd[0])/2)
+        if(pointStart[0] > pointEnd[0]):
             xCost -= 10
         else:
             xCost += 10
-        yCost = int((y1+y2)/2) - 10
+        yCost = int((pointStart[1]+pointEnd[1])/2) - 10
         txtCost = self._canvas.create_text(xCost,yCost,text = cost, font="TkDefaultFont 10 bold")
 
-        #add to chilNodes
-        child = {"Node":node,"g":cost,"arrow":arrow,"txtCost":txtCost}
-        self._childNodes.append(child)
-
+        return arrow,txtCost
+    
     def remove_child(self,node):
         for item in self._childNodes:
             if(item.get("Node") == node):
@@ -85,19 +97,21 @@ class Node():
                 self._childNodes.remove(item)
                 return
 
-    
-    def select(self, event):
-        widget = event.widget                       # Get handle to canvas 
-        # Convert screen coordinates to canvas coordinates
-        xc = widget.canvasx(event.x); yc = widget.canvasx(event.y)
-        self.item = widget.find_closest(xc, yc)[0]        # ID for closest
-        self.previous = (xc, yc)
-        print((xc, yc, self.item))
+    def drag_arrow(self,xc,yc):
+        #for child
+        for index,child in enumerate(self._childNodes):
+            node = child["Node"]
+            #destroy 
+            self._canvas.delete(child["arrow"])
+            self._canvas.delete(child["txtCost"])
 
-    def drag(self, event):
-        widget = event.widget
-        xc = widget.canvasx(event.x); yc = widget.canvasx(event.y)
-        self._canvas.move(self, xc-self.previous[0], yc-self.previous[1])
-        self.previous = (xc, yc)
+            #create new arrow
+            cost = child.get("cost")
+            coorParent = (self._x,self._y)
+            coorChild = (node._x,node._y)
+            arrow,txtCost = self.create_arrow(coorParent,coorChild,cost)
+            self._childNodes[index]["arrow"] = arrow
+            self._childNodes[index]["txtCost"] = txtCost
+
+        #for parent
             
-                
