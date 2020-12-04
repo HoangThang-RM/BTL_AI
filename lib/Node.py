@@ -64,6 +64,7 @@ class Node():
         #add to chilNodes
         child = {"Node":node,"cost":cost,"arrow":arrow,"txtCost":txtCost}   
         self._childNodes.append(child)
+        node._parentNodes.append(self)
 
     def create_arrow(self,coorParent,coorChild,cost): 
         #coordinates of the center of the circle
@@ -99,7 +100,7 @@ class Node():
 
     def drag_arrow(self,xc,yc):
         #for child
-        for index,child in enumerate(self._childNodes):
+        for child in self._childNodes:
             node = child["Node"]
             #destroy 
             self._canvas.delete(child["arrow"])
@@ -110,8 +111,22 @@ class Node():
             coorParent = (self._x,self._y)
             coorChild = (node._x,node._y)
             arrow,txtCost = self.create_arrow(coorParent,coorChild,cost)
-            self._childNodes[index]["arrow"] = arrow
-            self._childNodes[index]["txtCost"] = txtCost
+            child["arrow"] = arrow
+            child["txtCost"] = txtCost
 
         #for parent
-            
+        for parent in self._parentNodes:
+            for child in parent._childNodes:
+                if(child["Node"] == self):
+                    #destroy 
+                    parent._canvas.delete(child["arrow"])
+                    parent._canvas.delete(child["txtCost"])
+
+                    #create new arrow
+                    cost = child.get("cost")
+                    coorParent = (parent._x,parent._y)
+                    coorChild = (self._x,self._y)
+                    arrow,txtCost = self.create_arrow(coorParent,coorChild,cost)
+                    child["arrow"] = arrow
+                    child["txtCost"] = txtCost
+                    break
