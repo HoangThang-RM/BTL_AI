@@ -1,6 +1,6 @@
 from tkinter import (Button, Label, Entry, LabelFrame, StringVar, messagebox, Canvas,
                      Listbox,OptionMenu, scrolledtext,ttk)
-from tkinter import Tk, END, LEFT, RIGHT, TOP, BOTTOM,CENTER, BOTH, RAISED, GROOVE
+from tkinter import Tk, END, LEFT, RIGHT, TOP, BOTTOM,CENTER, BOTH, RAISED, GROOVE,LAST
 from tkinter.ttk import Style, Combobox, Frame
 from lib.node import Node
 from components.frames.config import BGWHITE, WHITE
@@ -10,6 +10,7 @@ class GraphFrame(Frame):
     def __init__(self, parent):
         Frame.__init__(self, parent,style=BGWHITE,relief=GROOVE, borderwidth=1)
         self._parent = parent
+        self._relationship = [None,None,None]
         self.__initUI()
 
     def __initUI(self):
@@ -50,17 +51,16 @@ class GraphFrame(Frame):
         RELATIONSHIP = "relationship"
 
         nameTool = get_variable("toolTarget")._nameTool
+        nodeList = get_variable("nodeList")
+        x = e.x
+        y = e.y
 
         if(nameTool == CREATENODE):
             self.create_node(e)
             return
         
         if(nameTool == CURSOR):
-            nodeList = get_variable("nodeList")
-
             #check position
-            x = e.x
-            y = e.y
             self.previous = (x,y)
             for node in nodeList:
                 iX = node._x
@@ -69,28 +69,106 @@ class GraphFrame(Frame):
                     self.item = node
                     return
             self.item = None
-            
         
+        if(nameTool == RELATIONSHIP):
+            #find node start
+            for i in nodeList:
+                nodeX = i._x
+                nodeY = i._y
+                diameter = i._diameter
+                if(x > nodeX and x < (nodeX + diameter) and y > nodeY and y < (nodeY + diameter)):
+                    self._relationship[1] = i
+                    return
+            return       
+
+    #=====Cursor=====#
     def drag(self, event):
-        if(self.item == None):
+        CURSOR = "cursor"
+        RELATIONSHIP = "relationship"
+
+        nameTool = get_variable("toolTarget")._nameTool
+        x = event.x
+        y = event.y
+
+        #cursor
+        if(nameTool == CURSOR):
+            if(self.item == None):
+                return
+
+            widget = event.widget
+            xc = widget.canvasx(x) - self.previous[0]
+            yc = widget.canvasx(y) - self.previous[1]
+
+            self.item.drag_node(xc,yc)
+
+            self.item._x = self.item._x + xc
+            self.item._y = self.item._y + yc
+            self.previous = (xc + self.previous[0], yc + self.previous[1])
             return
+        
+        #relationship
+        if(nameTool == RELATIONSHIP):
+            nodeStart = self._relationship[1]
+            if(nodeStart == None):
+                return
 
-        widget = event.widget
-        xc = widget.canvasx(event.x) - self.previous[0]
-        yc = widget.canvasx(event.y) - self.previous[1]
+            radius = nodeStart._diameter / 2
+            if(self._relationship[0] != None):
+                self._canvas.delete(self._relationship[0])
 
-        self._canvas.move(self.item._oval, xc, yc)
-        self._canvas.move(self.item._txtOval, xc, yc)
-        self._canvas.move(self.item._txtHeuristic, xc, yc)
-        self.item.drag_arrow(xc,yc)
+            Templine = self._canvas.create_line(nodeStart._x + radius,nodeStart._y + radius,x,y,arrow = LAST)
+            self._relationship[0] = Templine
 
-        self.item._x = self.item._x + xc
-        self.item._y = self.item._y + yc
-        self.previous = (xc + self.previous[0], yc + self.previous[1])
+        
 
     def end_drag(self,event):
-        self.item = None
+        CURSOR = "cursor"
+        RELATIONSHIP = "relationship"
+        properties = get_variable("properties")
+        nameTool = get_variable("toolTarget")._nameTool
+        nodeList = get_variable("nodeList")
+        x = event.x
+        y = event.y
 
+        if(nameTool == CURSOR):
+            self.item = None
+            return
+        
+        if(nameTool == RELATIONSHIP):
+            #delete line temp
+            self._canvas.delete(self._relationship[0])
+
+            if(self._relationship[1] == None):
+                return
+
+            #find node end
+            for i in nodeList:
+                nodeX = i._x
+                nodeY = i._y
+                diameter = i._diameter
+                if(x > nodeX and x < (nodeX + diameter) and y > nodeY and y < (nodeY + diameter)):
+                    self._relationship[2] = i  
+            if(self._relationship[2] == None or self._relationship[1] == self._relationship[2]):
+                return
+
+            #add child
+            relParent = self._relationship[1]
+            relChild = self._relationship[2]
+            flag = True
+            for i in relParent._childNodes:
+                if (i["Node"] == relChild):
+                    flag = False
+                    break
+            
+            if(flag):
+                relParent.add_child(relChild,0)
+            
+            properties.target_node(relParent)
+            properties.focus_cost(relChild)
+            self._relationship = [None,None,None]
+            return
+
+    #=====Create node=====#
     def create_node(self,e):
         nodeList = get_variable("nodeList")
         properties = get_variable("properties")
@@ -109,3 +187,4 @@ class GraphFrame(Frame):
         nodeList.append(newNode)
         properties.target_node(newNode)
         properties.focus_name()
+    

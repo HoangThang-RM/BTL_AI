@@ -1,9 +1,10 @@
 from tkinter import (Button, Label, Entry, LabelFrame, StringVar, messagebox,
                      Listbox,OptionMenu, scrolledtext,ttk)
-from tkinter import Tk, END, LEFT, RIGHT, TOP, BOTTOM,CENTER, BOTH, RAISED, GROOVE
+from tkinter import Tk, END, LEFT, RIGHT, TOP, BOTTOM,CENTER, BOTH, GROOVE
 from tkinter.ttk import Style, Combobox, Frame
 from components.frames.config import GREY
 from lib.global_variable import set_variable,get_variable
+from lib.node import Node
 
 class Properties(Frame):
     def __init__(self, parent, target = {}):
@@ -24,7 +25,7 @@ class Properties(Frame):
 
 
         self.varHeuristic = StringVar()
-        Label(self, text="giá trị đỉnh", bg=GREY).pack(padx=20, pady=(20,10))
+        Label(self, text="Giá trị đỉnh", bg=GREY).pack(padx=20, pady=(20,10))
         self._entHeuristic = Entry(self, textvariable = self.varHeuristic)
         self._entHeuristic.pack(padx=20)
         self._entHeuristic.bind("<Return>", self.edit_heuristic)
@@ -36,8 +37,11 @@ class Properties(Frame):
         self.titleFrame = Frame(self.childFrame)
         self.titleFrame.pack()
         Label(self.titleFrame, text="Tên điểm", width="10", bg=GREY).grid(column=0, row=0, padx=5,pady=5)
-        Label(self.titleFrame, text="Chỉ số H", width="10", bg=GREY).grid(column=1, row=0, padx=5,pady=5)
-    
+        Label(self.titleFrame, text="Giá trị cạnh", width="10", bg=GREY).grid(column=1, row=0, padx=5,pady=5)
+        btnAdd = Button(self.childFrame, font = ("Times New Roman", 10,"bold"), width=6, heigh=1, text="+"
+                        ,bg=GREY,relief=GROOVE,command=self.create_new_child)
+        btnAdd.pack(side=BOTTOM,pady=5)
+
     def edit_name(self,e):
         nameNode = self.varName.get() 
         
@@ -65,9 +69,27 @@ class Properties(Frame):
         except Exception:
             self._entHeuristic.config(highlightthickness=1,highlightcolor="red")
             return
+          
+    def edit_cost(self,child,cost):
+        if(self.target == {}):
+            return
+        try:
+            int(cost)
+            self.target.edit_node(child = [child,cost])
+            self.focus()
+            return
+        except Exception:
+            self._entHeuristic.config(highlightthickness=1,highlightcolor="red")
+            return
     
     def focus_name(self):
         self._entName.focus()
+    
+    def focus_cost(self,nodeCost):
+        for child in self.listChild:
+            if(child._node == nodeCost):
+                child._eCost.focus()
+                break
 
     def target_node(self,node):
         self.listChild = [] #giai phong bo nho childNode
@@ -92,16 +114,23 @@ class Properties(Frame):
         self.titleFrame = Frame(self.childFrame)
         self.titleFrame.pack()
         Label(self.titleFrame, text="Tên điểm", width="10", bg=GREY).grid(column=0, row=0, padx=5,pady=5)
-        Label(self.titleFrame, text="Chỉ số H", width="10", bg=GREY).grid(column=1, row=0, padx=5,pady=5)
+        Label(self.titleFrame, text="Giá trị cạnh", width="10", bg=GREY).grid(column=1, row=0, padx=5,pady=5)
+        btnAdd = Button(self.childFrame, font = ("Times New Roman", 10,"bold"), width=6, heigh=1, text="+"
+                        ,bg=GREY,relief=GROOVE,command=self.create_new_child)
+        btnAdd.pack(side=BOTTOM,pady=5)
         
         #show childs
         for item in node._childNodes:
-            self.listChild.append(ChildNode(self.childFrame, item.get("Node"), item.get("cost")))
+            self.listChild.append(ChildNodeFrame(self.childFrame,self ,item.get("Node"), item.get("cost")))
+    
+    def create_new_child(self):
+        return
 
-class ChildNode(Frame):
-    def __init__(self,parent,node,cost):
+class ChildNodeFrame(Frame):
+    def __init__(self,parent,properties,node,cost):
         Frame.__init__(self, parent)
         self._parent = parent
+        self._properties = properties
         self._node = node
         self._cost = cost
         self.__initUI()
@@ -111,6 +140,10 @@ class ChildNode(Frame):
 
         lblName = Label(self, text=self._node._nameNode, width="10",bg=GREY)
         lblName.grid(column=0, row=0, padx=5,pady=5)
-        eCost = Entry(self, width=10)
-        eCost.grid(column=1, row=0, padx=5, pady=5)
-        eCost.insert(END,self._cost)
+    
+        self.varCost = StringVar()
+        self._eCost = Entry(self, width=10, textvariable = self.varCost)
+        self._eCost.grid(column=1, row=0, padx=5, pady=5)
+        self._eCost.insert(END,self._cost)
+        self._eCost.bind("<Return>", lambda event: self._properties.edit_cost(self._node,self.varCost.get()))
+  

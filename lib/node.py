@@ -48,10 +48,18 @@ class Node():
             self._canvas.itemconfig(self._txtHeuristic, text=heuristic)
         
         if(child != None):
+            childNode = child[0]
+            cost = child[1]
             for item in self._childNodes:
-                if(item.get("Node") == child.get("Node")):
-                    item["cost"] = child.get("cost")
-                    self._canvas.itemconfig(item.get("txtCost"), txt = child.get("cost"))
+                if(item.get("Node") == childNode):
+                    self._canvas.delete(item["arrow"])
+                    self._canvas.delete(item["txtCost"])
+                    
+                    
+                    arrow, txtCost = self.create_arrow((self._x,self._y),(childNode._x,childNode._y),cost)
+                    item["cost"] = cost
+                    item["arrow"] = arrow
+                    item["txtCost"] = txtCost
                     break
     
     # ============================== Child Node  ============================== #
@@ -98,8 +106,12 @@ class Node():
                 self._childNodes.remove(item)
                 return
 
-    def drag_arrow(self,xc,yc):
-        #for child
+    def drag_node(self,xc,yc):
+        self._canvas.move(self._oval, xc, yc)
+        self._canvas.move(self._txtOval, xc, yc)
+        self._canvas.move(self._txtHeuristic, xc, yc)
+        
+        #for arrow of child
         for child in self._childNodes:
             node = child["Node"]
             #destroy 
@@ -114,7 +126,7 @@ class Node():
             child["arrow"] = arrow
             child["txtCost"] = txtCost
 
-        #for parent
+        #for arrow of parent
         for parent in self._parentNodes:
             for child in parent._childNodes:
                 if(child["Node"] == self):
