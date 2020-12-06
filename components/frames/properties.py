@@ -7,7 +7,7 @@ from lib.global_variable import set_variable,get_variable
 from lib.node import Node
 
 class Properties(Frame):
-    def __init__(self, parent, target = {}):
+    def __init__(self, parent, target = None):
         Frame.__init__(self, parent,width="200", relief=GROOVE, borderwidth=1)
         self.parent = parent
         self.target = target
@@ -34,22 +34,14 @@ class Properties(Frame):
 
         Label(self, text="Danh sách điểm con", bg=GREY).pack(padx=20, pady=(30,5))
         self.childFrame = Frame(self, width="160", heigh="50", relief=GROOVE, borderwidth=1)
-        self.childFrame.pack(padx=20,pady=10,ipadx=5,ipady=5)
-        
-        self.titleFrame = Frame(self.childFrame)
-        self.titleFrame.pack()
-        Label(self.titleFrame, text="Tên điểm", width="10", bg=GREY).grid(column=0, row=0, padx=5,pady=5)
-        Label(self.titleFrame, text="Giá trị cạnh", width="10", bg=GREY).grid(column=1, row=0, padx=5,pady=5)
-        Label(self.titleFrame, text="",width="1",bg=GREY).grid(column=2,row=0)
-        btnAdd = Button(self.childFrame, font = ("Times New Roman", 10,"bold"), width=6, text="+"
-                        ,bg=GREY,relief=GROOVE,command=self.create_new_child)
-        btnAdd.pack(side=BOTTOM,pady=5)
+
+        self.target_node()
 
     def edit_name(self,e):
         self._entName.config(highlightthickness=0)
         nameNode = self.varName.get() 
         
-        if(self.target == {}):
+        if(self.target == None):
             return
         
         nodeList = get_variable("nodeList")
@@ -59,25 +51,22 @@ class Properties(Frame):
                 return
                 
         self.target.edit_node(name = nameNode)
-        #self._entHeuristic.focus()
 
     def edit_heuristic(self,e):
         self._entHeuristic.config(highlightthickness=0)
-        if(self.target == {}):
+        if(self.target == None):
             return
         heuristicNode = self.varHeuristic.get()
         try:
             int(heuristicNode)
             self.target.edit_node(heuristic = heuristicNode)
-            #if(self.target._childNodes != None):
-            #    self.focus_cost(self.target._childNodes[0]["Node"])
             return
         except Exception:
             self._entHeuristic.config(highlightthickness=1,highlightcolor="red")
             return
           
     def edit_cost(self,child,cost):
-        if(self.target == {}):
+        if(self.target == None):
             return
         try:
             int(cost)
@@ -96,21 +85,24 @@ class Properties(Frame):
                 child._eCost.focus()
                 break
 
-    def target_node(self,node):
+    def target_node(self,node = None):
         self.listChild = [] #giai phong bo nho childNode
         self._entHeuristic.config(highlightthickness=0,highlightcolor="black")
         self._entName.config(highlightthickness=0,highlightcolor="black")
         self.focus_name()
-
+        
         #highlight node
-        if(self.target != {}):
+        if(self.target != None):
             self.target._canvas.itemconfig(self.target._oval, outline="black")
-        node._canvas.itemconfig(node._oval, outline="red")
+        
         self.target = node
-
-        #infor Node
-        self.varName.set(self.target._nameNode)
-        self.varHeuristic.set(self.target._heuristic)
+        if(node != None):
+            node._canvas.itemconfig(node._oval, outline="red")
+            self.varName.set(self.target._nameNode)
+            self.varHeuristic.set(self.target._heuristic)
+        else:
+            self.varName.set("")
+            self.varHeuristic.set("")
 
         #show title
         self.childFrame.destroy()
@@ -126,11 +118,12 @@ class Properties(Frame):
         btnAdd.pack(side=BOTTOM,pady=5)
         
         #show childs
-        for item in node._childNodes:
-            self.listChild.append(ChildNodeFrame(self.childFrame,self ,item.get("Node"), item.get("cost")))
+        if(node != None):
+            for item in node._childNodes:
+                self.listChild.append(ChildNodeFrame(self.childFrame,self ,item.get("Node"), item.get("cost")))
     
     def create_new_child(self):
-        if(self.target == {}):
+        if(self.target == None):
             return
 
         nodeList = get_variable("nodeList")
@@ -148,10 +141,15 @@ class Properties(Frame):
         nodeList.append(newChild)
         self.target.add_child(newChild,0)
         self.target_node(newChild)
+
     def delete_child(self,child):
-        if(self.target == {}):
+        if(self.target == None):
             return
         self.target.remove_child(child)
+    
+    def delete_node(self):
+        self.target.delete()
+        self.target = None
 
 class ChildNodeFrame(Frame):
     def __init__(self,parent,properties,node,cost):

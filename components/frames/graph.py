@@ -26,6 +26,7 @@ class GraphFrame(Frame):
         self._canvas.bind('<Button-1>',self.mouse_event)
         self._canvas.bind('<B1-Motion>',self.drag)
         self._canvas.bind('<ButtonRelease-1>',self.end_drag)
+        self._parent.bind("<Key>",self.key_event)
         nodeList = get_variable("nodeList")
         
         A = Node(self._canvas,"A",300,200,10,30)
@@ -42,6 +43,13 @@ class GraphFrame(Frame):
 
         nodeList = [A,B,C,D]
         set_variable("nodeList",nodeList)
+    # ============================== KEY EVENT ============================== #
+
+    def key_event(self,event):
+        properties = get_variable("properties")
+        if(event.keysym == "Delete"):
+            properties.delete_node()    
+        
     
     # ============================== MOUSE EVENT ============================== #
 

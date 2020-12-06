@@ -63,7 +63,24 @@ class Node():
                     item["txtCost"] = txtCost
                     break
 
-    
+    def delete(self):
+        nodeList = get_variable("nodeList")
+        self._canvas.delete(self._oval)
+        self._canvas.delete(self._txtOval)
+        self._canvas.delete(self._txtHeuristic)
+
+        for node in nodeList:
+            if(node == self):
+                nodeList.remove(node)
+
+        while(self._childNodes != []):
+            self.remove_child(self._childNodes[0]["Node"])
+
+        while(self._parentNodes != []):
+            self.remove_parent(self._parentNodes[0])
+
+        properties = get_variable("properties")
+        properties.target_node()
     # ============================== Child Node  ============================== #
     
     def add_child(self,node,cost):
@@ -76,7 +93,7 @@ class Node():
         self._childNodes.append(child)
         node._parentNodes.append(self)
         self.sort_child()
-    
+
     def remove_child(self,child):
         for item in self._childNodes:
             if(item["Node"] == child):
@@ -93,6 +110,13 @@ class Node():
         properties = get_variable("properties")
         properties.target_node(self)
         
+    def remove_parent(self,parent):
+        for item in self._parentNodes:
+            if(item == parent):
+                item.remove_child(self)
+
+        properties = get_variable("properties")
+        properties.target_node(self)
 
     def sort_child(self):
         self._childNodes.sort(key=self.get_x)
@@ -161,4 +185,7 @@ class Node():
                     child["arrow"] = arrow
                     child["txtCost"] = txtCost
                     break
-        self.sort_child()
+        #sort
+        for parent in self._parentNodes:
+            parent.sort_child()
+        
