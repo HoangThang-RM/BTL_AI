@@ -148,8 +148,9 @@ class Properties(Frame):
         self.target.remove_child(child)
     
     def delete_node(self):
-        self.target.delete()
-        self.target = None
+        if(self.target != None):
+            self.target.delete()
+            self.target = None
 
 class ChildNodeFrame(Frame):
     def __init__(self,parent,properties,node,cost):

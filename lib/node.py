@@ -127,14 +127,14 @@ class Node():
 
     def create_arrow(self,coorParent,coorChild,cost): 
         #coordinates of the center of the circle
-        radius = self._diameter/2
+        radius = int(self._diameter/2)
         x1 = coorParent[0] + radius
         y1 = coorParent[1] + radius
         x2 = coorChild[0] + radius
         y2 = coorChild[1] + radius
         pointStart = ClosestIntersection(x1,y1,radius,(x2,y2),(x1,y1))
         pointEnd = ClosestIntersection(x2,y2,radius,(x1,y1),(x2,y2))
-        #draw diagonal arrows
+        #draw arrows
         arrow = self._canvas.create_line(pointStart[0],pointStart[1],pointEnd[0],pointEnd[1],arrow = LAST)
         self._canvas.tag_lower(arrow)
         

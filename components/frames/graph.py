@@ -1,7 +1,7 @@
 from tkinter import (Button, Label, Entry, LabelFrame, StringVar, messagebox, Canvas,
                      Listbox,OptionMenu, scrolledtext,ttk)
 from tkinter import Tk, END, LEFT, RIGHT, TOP, BOTTOM,CENTER, BOTH, RAISED, GROOVE,LAST
-from tkinter.ttk import Style, Combobox, Frame
+from tkinter.ttk import Style, Notebook, Combobox, Frame
 from lib.node import Node
 from components.frames.config import BGWHITE, WHITE
 from lib.global_variable import set_variable,get_variable
@@ -15,8 +15,6 @@ class GraphFrame(Frame):
 
     def __initUI(self):
         self.pack(side=LEFT, fill="both", expand=True)
-        #label = Label(self,text="Đồ thị", pady=10,bg=WHITE ,font="Arial 18 bold")
-        #label.pack(fill=BOTH)
 
         self._canvas = Canvas(self,bg=WHITE,bd=0, highlightthickness=0)
         self._canvas.pack(fill="both", expand=True, padx=5, pady=5)
@@ -46,7 +44,6 @@ class GraphFrame(Frame):
     # ============================== KEY EVENT ============================== #
 
     def key_event(self,event):
-        print(event)
         properties = get_variable("properties")
         toolList = get_variable("toolList")
         if(event.keysym == "Delete"):
