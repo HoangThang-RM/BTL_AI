@@ -22,6 +22,7 @@ class Properties(Frame):
         self._entName = Entry(self, textvariable = self.varName)
         self._entName.pack(padx=20)
         self._entName.bind("<Return>", self.edit_name)
+        self._entName.bind("<FocusOut>", self.edit_name)
 
 
         self.varHeuristic = StringVar()
@@ -29,6 +30,7 @@ class Properties(Frame):
         self._entHeuristic = Entry(self, textvariable = self.varHeuristic)
         self._entHeuristic.pack(padx=20)
         self._entHeuristic.bind("<Return>", self.edit_heuristic)
+        self._entHeuristic.bind("<FocusOut>", self.edit_heuristic)
 
         Label(self, text="Danh sách điểm con", bg=GREY).pack(padx=20, pady=(30,5))
         self.childFrame = Frame(self, width="160", heigh="50", relief=GROOVE, borderwidth=1)
@@ -38,11 +40,12 @@ class Properties(Frame):
         self.titleFrame.pack()
         Label(self.titleFrame, text="Tên điểm", width="10", bg=GREY).grid(column=0, row=0, padx=5,pady=5)
         Label(self.titleFrame, text="Giá trị cạnh", width="10", bg=GREY).grid(column=1, row=0, padx=5,pady=5)
-        btnAdd = Button(self.childFrame, font = ("Times New Roman", 10,"bold"), width=6, heigh=1, text="+"
+        btnAdd = Button(self.childFrame, font = ("Times New Roman", 10,"bold"), width=6, text="+"
                         ,bg=GREY,relief=GROOVE,command=self.create_new_child)
         btnAdd.pack(side=BOTTOM,pady=5)
 
     def edit_name(self,e):
+        self._entName.config(highlightthickness=0)
         nameNode = self.varName.get() 
         
         if(self.target == {}):
@@ -50,21 +53,23 @@ class Properties(Frame):
         
         nodeList = get_variable("nodeList")
         for item in nodeList:
-            if(item._nameNode.lower() == nameNode.lower()):
+            if(item._nameNode.lower() == nameNode.lower() and item._nameNode.lower() != self.target._nameNode.lower()):
                 self._entName.config(highlightthickness=1,highlightcolor="red")
                 return
                 
         self.target.edit_node(name = nameNode)
-        self._entHeuristic.focus()
+        #self._entHeuristic.focus()
 
     def edit_heuristic(self,e):
+        self._entHeuristic.config(highlightthickness=0)
         if(self.target == {}):
             return
         heuristicNode = self.varHeuristic.get()
         try:
             int(heuristicNode)
             self.target.edit_node(heuristic = heuristicNode)
-            self.focus()
+            #if(self.target._childNodes != None):
+            #    self.focus_cost(self.target._childNodes[0]["Node"])
             return
         except Exception:
             self._entHeuristic.config(highlightthickness=1,highlightcolor="red")
@@ -76,7 +81,6 @@ class Properties(Frame):
         try:
             int(cost)
             self.target.edit_node(child = [child,cost])
-            self.focus()
             return
         except Exception:
             self._entHeuristic.config(highlightthickness=1,highlightcolor="red")
@@ -95,7 +99,7 @@ class Properties(Frame):
         self.listChild = [] #giai phong bo nho childNode
         self._entHeuristic.config(highlightthickness=0,highlightcolor="black")
         self._entName.config(highlightthickness=0,highlightcolor="black")
-        self._entName.focus()
+        self.focus_name()
 
         #highlight node
         if(self.target != {}):
@@ -115,7 +119,7 @@ class Properties(Frame):
         self.titleFrame.pack()
         Label(self.titleFrame, text="Tên điểm", width="10", bg=GREY).grid(column=0, row=0, padx=5,pady=5)
         Label(self.titleFrame, text="Giá trị cạnh", width="10", bg=GREY).grid(column=1, row=0, padx=5,pady=5)
-        btnAdd = Button(self.childFrame, font = ("Times New Roman", 10,"bold"), width=6, heigh=1, text="+"
+        btnAdd = Button(self.childFrame, font = ("Times New Roman", 10,"bold"), width=6, text="+"
                         ,bg=GREY,relief=GROOVE,command=self.create_new_child)
         btnAdd.pack(side=BOTTOM,pady=5)
         
@@ -124,7 +128,24 @@ class Properties(Frame):
             self.listChild.append(ChildNodeFrame(self.childFrame,self ,item.get("Node"), item.get("cost")))
     
     def create_new_child(self):
-        return
+        if(self.target == {}):
+            return
+
+        nodeList = get_variable("nodeList")
+        children = self.target._childNodes
+        x = None
+        y = None
+        if(children == []):
+            x = self.target._x + 20
+            y = self.target._y + 80
+        else:
+            x = children[-1]["Node"]._x + 50
+            y = children[-1]["Node"]._y
+        
+        newChild = Node(self.target._canvas,"",0,x,y,30)
+        nodeList.append(newChild)
+        self.target.add_child(newChild,0)
+        self.target_node(newChild)
 
 class ChildNodeFrame(Frame):
     def __init__(self,parent,properties,node,cost):
@@ -146,4 +167,6 @@ class ChildNodeFrame(Frame):
         self._eCost.grid(column=1, row=0, padx=5, pady=5)
         self._eCost.insert(END,self._cost)
         self._eCost.bind("<Return>", lambda event: self._properties.edit_cost(self._node,self.varCost.get()))
+        self._eCost.bind("<FocusOut>", lambda event: self._properties.edit_cost(self._node,self.varCost.get()))
+        
   

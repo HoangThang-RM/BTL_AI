@@ -3,8 +3,8 @@ from lib.global_variable import get_variable
 from lib.intersection import ClosestIntersection
 
 class Node():
-    def __init__(self,canvas,nameNode,heuristic,parentNodes,x,y,diameter,color="white"):
-        self._parentNodes = parentNodes
+    def __init__(self,canvas,nameNode,heuristic,x,y,diameter,color="white"):
+        self._parentNodes = []
         self._childNodes = []
         self._nameNode = nameNode
         self._heuristic = heuristic
@@ -37,7 +37,8 @@ class Node():
         properties = get_variable("properties")
         properties.target_node(self)
 
-
+    # ============================== Edit Node  ============================== #
+    
     def edit_node(self,name = None,heuristic = None, child = None):
         if(name != None):
             self._nameNode = name
@@ -73,6 +74,22 @@ class Node():
         child = {"Node":node,"cost":cost,"arrow":arrow,"txtCost":txtCost}   
         self._childNodes.append(child)
         node._parentNodes.append(self)
+        self.sort_child()
+    
+    def remove_child(self,node):
+        for item in self._childNodes:
+            if(item.get("Node") == node):
+                #destroy arrow
+                item.get("arrow").destroy()
+                self._childNodes.remove(item)
+                return
+
+    def sort_child(self):
+        self._childNodes.sort(key=self.get_x)
+    def get_x(self,element):
+        return element["Node"]._x
+    
+    # ============================== Move Node ============================== #
 
     def create_arrow(self,coorParent,coorChild,cost): 
         #coordinates of the center of the circle
@@ -97,14 +114,6 @@ class Node():
         txtCost = self._canvas.create_text(xCost,yCost,text = cost, font="TkDefaultFont 10 bold")
 
         return arrow,txtCost
-    
-    def remove_child(self,node):
-        for item in self._childNodes:
-            if(item.get("Node") == node):
-                #destroy arrow
-                item.get("arrow").destroy()
-                self._childNodes.remove(item)
-                return
 
     def drag_node(self,xc,yc):
         self._canvas.move(self._oval, xc, yc)
@@ -142,3 +151,4 @@ class Node():
                     child["arrow"] = arrow
                     child["txtCost"] = txtCost
                     break
+        self.sort_child()

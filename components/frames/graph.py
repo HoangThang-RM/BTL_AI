@@ -28,10 +28,10 @@ class GraphFrame(Frame):
         self._canvas.bind('<ButtonRelease-1>',self.end_drag)
         nodeList = get_variable("nodeList")
         
-        A = Node(self._canvas,"A",300,[],200,10,30)
-        B = Node(self._canvas,"B",100,[A],150,60,30)
-        C = Node(self._canvas,"C",200,[A],250,60,30)
-        D = Node(self._canvas,"D",500,[C],300,120,30)
+        A = Node(self._canvas,"A",300,200,10,30)
+        B = Node(self._canvas,"B",100,150,60,30)
+        C = Node(self._canvas,"C",200,250,60,30)
+        D = Node(self._canvas,"D",500,300,120,30)
         
         A.add_child(B,30)
         A.add_child(C,10)
@@ -183,8 +183,7 @@ class GraphFrame(Frame):
                 return
         
         #create new node
-        newNode = Node(self._canvas,"",0,[],x-15,y-15,30)
+        newNode = Node(self._canvas,"",0,x-15,y-15,30)
         nodeList.append(newNode)
         properties.target_node(newNode)
-        properties.focus_name()
     
