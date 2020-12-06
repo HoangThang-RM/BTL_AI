@@ -37,7 +37,7 @@ class Node():
         properties = get_variable("properties")
         properties.target_node(self)
 
-    # ============================== Edit Node  ============================== #
+    # ==============================  Node  ============================== #
     
     def edit_node(self,name = None,heuristic = None, child = None):
         if(name != None):
@@ -62,6 +62,7 @@ class Node():
                     item["arrow"] = arrow
                     item["txtCost"] = txtCost
                     break
+
     
     # ============================== Child Node  ============================== #
     
@@ -76,13 +77,22 @@ class Node():
         node._parentNodes.append(self)
         self.sort_child()
     
-    def remove_child(self,node):
+    def remove_child(self,child):
         for item in self._childNodes:
-            if(item.get("Node") == node):
-                #destroy arrow
-                item.get("arrow").destroy()
+            if(item["Node"] == child):
+                #remove child
+                self._canvas.delete(item["arrow"])
+                self._canvas.delete(item["txtCost"])
                 self._childNodes.remove(item)
-                return
+                #remove parent
+                for parent in item["Node"]._parentNodes:
+                    if(parent == self):
+                        item["Node"]._parentNodes.remove(parent)
+                break
+
+        properties = get_variable("properties")
+        properties.target_node(self)
+        
 
     def sort_child(self):
         self._childNodes.sort(key=self.get_x)

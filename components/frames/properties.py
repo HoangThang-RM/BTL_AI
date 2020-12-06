@@ -1,6 +1,6 @@
 from tkinter import (Button, Label, Entry, LabelFrame, StringVar, messagebox,
                      Listbox,OptionMenu, scrolledtext,ttk)
-from tkinter import Tk, END, LEFT, RIGHT, TOP, BOTTOM,CENTER, BOTH, GROOVE
+from tkinter import Tk, END, LEFT, RIGHT, TOP, BOTTOM,CENTER, BOTH, GROOVE, FLAT
 from tkinter.ttk import Style, Combobox, Frame
 from components.frames.config import GREY
 from lib.global_variable import set_variable,get_variable
@@ -40,6 +40,7 @@ class Properties(Frame):
         self.titleFrame.pack()
         Label(self.titleFrame, text="Tên điểm", width="10", bg=GREY).grid(column=0, row=0, padx=5,pady=5)
         Label(self.titleFrame, text="Giá trị cạnh", width="10", bg=GREY).grid(column=1, row=0, padx=5,pady=5)
+        Label(self.titleFrame, text="",width="1",bg=GREY).grid(column=2,row=0)
         btnAdd = Button(self.childFrame, font = ("Times New Roman", 10,"bold"), width=6, text="+"
                         ,bg=GREY,relief=GROOVE,command=self.create_new_child)
         btnAdd.pack(side=BOTTOM,pady=5)
@@ -119,7 +120,8 @@ class Properties(Frame):
         self.titleFrame.pack()
         Label(self.titleFrame, text="Tên điểm", width="10", bg=GREY).grid(column=0, row=0, padx=5,pady=5)
         Label(self.titleFrame, text="Giá trị cạnh", width="10", bg=GREY).grid(column=1, row=0, padx=5,pady=5)
-        btnAdd = Button(self.childFrame, font = ("Times New Roman", 10,"bold"), width=6, text="+"
+        Label(self.titleFrame, text="",width="1",bg=GREY).grid(column=2,row=0)
+        btnAdd = Button(self.childFrame, font = ("Times New Roman", 10), width=6, text="+"
                         ,bg=GREY,relief=GROOVE,command=self.create_new_child)
         btnAdd.pack(side=BOTTOM,pady=5)
         
@@ -146,6 +148,10 @@ class Properties(Frame):
         nodeList.append(newChild)
         self.target.add_child(newChild,0)
         self.target_node(newChild)
+    def delete_child(self,child):
+        if(self.target == {}):
+            return
+        self.target.remove_child(child)
 
 class ChildNodeFrame(Frame):
     def __init__(self,parent,properties,node,cost):
@@ -160,7 +166,7 @@ class ChildNodeFrame(Frame):
         self.pack()
 
         lblName = Label(self, text=self._node._nameNode, width="10",bg=GREY)
-        lblName.grid(column=0, row=0, padx=5,pady=5)
+        lblName.grid(column=0, row=0,pady=5)
     
         self.varCost = StringVar()
         self._eCost = Entry(self, width=10, textvariable = self.varCost)
@@ -170,3 +176,6 @@ class ChildNodeFrame(Frame):
         self._eCost.bind("<FocusOut>", lambda event: self._properties.edit_cost(self._node,self.varCost.get()))
         
   
+        self.btnDelete = Button(self, font = ("Arial", 10), text="x"
+                        ,bg=GREY,relief=FLAT,command= lambda : self._properties.delete_child(self._node))
+        self.btnDelete.grid(column=2,row=0)
