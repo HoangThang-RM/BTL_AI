@@ -16,8 +16,9 @@ class ToolLeft(Frame):
         self.pack(side=LEFT,fill="y")
         cursor = Tool(self,'cursor','cursor-32.png')
         cursor.target_tool()
-        Tool(self,'create-node','circle-32.png')
-        Tool(self,'relationship','up-arrow-32.png')
+        createNode = Tool(self,'create-node','circle-32.png')
+        relationship = Tool(self,'relationship','up-arrow-32.png')
+        set_variable("toolList",[cursor,createNode,relationship])
         
 class Tool(Frame):
     

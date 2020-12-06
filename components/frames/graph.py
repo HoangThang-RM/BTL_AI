@@ -46,11 +46,18 @@ class GraphFrame(Frame):
     # ============================== KEY EVENT ============================== #
 
     def key_event(self,event):
+        print(event)
         properties = get_variable("properties")
+        toolList = get_variable("toolList")
         if(event.keysym == "Delete"):
-            properties.delete_node()    
+            properties.delete_node()
+        if(event.char == "\x11"):
+            toolList[0].target_tool()
+        if(event.char == "\x01"):
+            toolList[1].target_tool()
+        if(event.char == "\x1a"):
+            toolList[2].target_tool()
         
-    
     # ============================== MOUSE EVENT ============================== #
 
     def mouse_event(self,e):
