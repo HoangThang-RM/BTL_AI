@@ -27,19 +27,33 @@ class GraphFrame(Frame):
         self._parent.bind("<Key>",self.key_event)
         nodeList = get_variable("nodeList")
         
-        A = Node(self._canvas,"A",300,200,10,30)
-        B = Node(self._canvas,"B",100,150,60,30)
-        C = Node(self._canvas,"C",200,250,60,30)
-        D = Node(self._canvas,"D",500,300,120,30)
-        
-        A.add_child(B,30)
-        A.add_child(C,10)
-        C.add_child(D,50)
-          
-        #A._childNodes = [{"Node":B,"g":30},{"Node":C,"g":10}]
-        #C._childNodes = [{"Node":D,"g":50}]
+        A = Node(self._canvas,"A",1000,150,20,30)
+        C = Node(self._canvas,"C",25,100,100,30)
+        D = Node(self._canvas,"D",20,200,100,30)
+        E = Node(self._canvas,"E",24,300,100,30)
+        F = Node(self._canvas,"F",22,400,20,30)
+        H = Node(self._canvas,"H",16,180,200,30)
+        I = Node(self._canvas,"I",17,450,200,30)
+        K = Node(self._canvas,"K",11,250,250,30)
+        B = Node(self._canvas,"B",0,150,250,30)
 
-        nodeList = [A,B,C,D]
+        A.add_child(C,17)
+        A.add_child(D,12)
+        A.add_child(E,15)
+        A.add_child(F,20)
+        
+        D.add_child(E,8)
+        D.add_child(H,10)
+
+        E.add_child(I,4)
+        E.add_child(K,5)
+
+        H.add_child(K,11)
+        H.add_child(B,18)
+
+        K.add_child(B,8)
+        nodeList = [A,C,D,E,F,H,K,I,B]
+
         set_variable("nodeList",nodeList)
     # ============================== KEY EVENT ============================== #
 

@@ -3,6 +3,7 @@ from tkinter.ttk import Combobox, Frame
 from components.frames.config import GREY,WHITE
 from lib.global_variable import get_variable
 from lib.intersection import ClosestIntersection
+from lib.algorithm import BeFS,At,starA
 from components.result import Result
 
 class TopFrame(Frame):
@@ -30,12 +31,46 @@ class TopFrame(Frame):
         self.algchoosen.current(0)
         self.algchoosen.grid(column=0,row=0,pady=2)
 
-            
 
         button = Button(self.toolFrame, text="Tính", command=self.calculate)
         button.grid(column=1,row=0, padx=3, pady=2)
     
     def calculate(self):
-        print(self.alg_value.get())
-        result = ["A","C","D","G","H","E"]
+        nameALG = self.alg_value.get()
+        BEFS = "BeFS"
+        AT = "At"
+        AKT = "Akt"
+        STARA = "A*"
+
+        nodeList = get_variable("nodeList")
+        result = []
+        pointList = {}
+        for node in nodeList:
+            name = node._nameNode
+            heuristic = float(node._heuristic)
+            distanceTo = {}
+
+            for child in node._childNodes:
+                distanceTo[child["Node"]._nameNode] = float(child["cost"])
+        
+            pointList[name] = NodeALG(name,heuristic,distanceTo)
+        
+        if(nameALG == BEFS):
+            result = BeFS(pointList,"A",["B"])
+        elif(nameALG == AT):
+            result = At(pointList,"A",["B"])
+        elif(nameALG == STARA):
+            result = starA(pointList,"A",["B"])
+        
+        print(result)
         Result(self._parent,result)
+
+class NodeALG:
+    def __init__(self,name = '',heuristic=0,distanceTo={}):
+        self.name = name
+        self.heuristic = heuristic
+        self.distanceTo = distanceTo
+    def __lt__(self,other):
+        return self.heuristic < other.heuristic
+    def __eq__(self,other):
+        return self.heuristic == other.heuristic
