@@ -56,6 +56,15 @@ class TopFrame(Frame):
         
         #Do thi cay
         if(nameTab == CAY):
+            nodeStart = self.varNodeStart.get()
+            nodeGoal = []
+            for item in self.varNodeEnd.get().split(","):
+                nodeGoal.append(item.strip())
+            
+            if(nodeStart == '' or nodeGoal == ''):
+                messagebox.showwarning(title=None, message="Không được để trống điểm xuất phát và đích")
+                return
+            
             for node in nodeList:
                 name = node._nameNode
                 heuristic = float(node._heuristic)
@@ -67,11 +76,13 @@ class TopFrame(Frame):
                 pointList[name] = NodeALG(name,heuristic,distanceTo)
             
             if(nameALG == BEFS):
-                result = BeFS(pointList,"A",["B"])
+                result = BeFS(pointList,nodeStart,nodeGoal)
             elif(nameALG == AT):
-                result = At(pointList,"A",["B"])
+                result = At(pointList,nodeStart,nodeGoal)
+            elif(nameALG == AKT):
+                result = starA(pointList,nodeStart,nodeGoal)
             elif(nameALG == STARA):
-                result = starA(pointList,"A",["B"])
+                result = starA(pointList,nodeStart,nodeGoal)
         
         #Ma tran
         elif(nameTab == MATRAN):

@@ -4,7 +4,7 @@ from tkinter.ttk import Frame
 from components.frames.config import GREY, WHITE,BGWHITE, CAY, MATRAN
 from lib.global_variable import get_variable
 from lib.intersection import ClosestIntersection
-
+DEPTH = 30
 class Result:
     def __init__(self,parent,result,tab):
         self._parent = parent
@@ -94,16 +94,32 @@ class Result:
         #title
         self._label = Label(self._cover,text="Kết quả",pady=10,font="Arial 18 bold",bg = WHITE)
         self._label.pack()
+        
 
         height = result["height"]
         width = result["width"]
+        matrix = result["matrix"]
         count = 0
-        for matrix in result["matrix"]:
-            count = count + 1   
+        oldWay = result["way"][0]["way"]
+        result["way"].pop(0)
+        print(result["way"])
+        for way in result["way"]:
+            row = way["way"][0]
+            column = way["way"][1]
+            row_ = oldWay[0]
+            column_ = oldWay[1]
+
+            count = count + 1
             if(count > 1):
                 Label(self._cover,text="|",pady=0,font="Arial 12 bold",bg = WHITE).pack()
                 Label(self._cover,text="|",pady=0,font="Arial 12 bold",bg = WHITE).pack()
                 Label(self._cover,text="V",pady=0,font="Arial 12 bold",bg = WHITE).pack()
+            #swap
+            tempVal = matrix[row][column]
+            matrix[row][column] = matrix[row_][column_]
+            matrix[row_][column_] = tempVal
+            oldWay = way["way"]
+            print(matrix)
             frmMatrix =Frame(self._cover,style=BGWHITE)
             frmMatrix.pack(side=TOP,pady=20)
             for i in range(height):
@@ -111,20 +127,19 @@ class Result:
                     mystr = StringVar()
                     ent = Entry(frmMatrix,textvariable = mystr,width=5,borderwidth=2,relief=GROOVE,state=DISABLED)
                     ent.grid(row = i, column = j)
-                    mystr.set(matrix[0][i][j])
-                    h = "h = " + str(matrix[1])
-                    g = "g = " + str(matrix[2])
-                    f = "f = " + str(matrix[3])
+                    mystr.set(matrix[i][j])
+                    h = "h = " + str(way["h"])
+                    g = "g = " + str(way["g"])
+                    f = "f = " + str(way["f"])
                     Label(frmMatrix,text=h,font="Arial 10",bg = WHITE).grid(row = 0, column = width+1)
                     Label(frmMatrix,text=g,font="Arial 10",bg = WHITE).grid(row = 1, column = width+1)
                     Label(frmMatrix,text=f,font="Arial 10",bg = WHITE).grid(row = 2, column = width+1)
-        
+                    
         if(result["isResult"]):
             mess = "Đã tìm được đích!"
         else:
-            mess = "Sau " + str(result["depth"]) + " lần vẫn chưa tìm được đích!"
+            mess = "Sau " + str(DEPTH) + " lần vẫn chưa tìm được đích!"
         Label(self._cover,text=mess,pady=10,font="Arial 12 bold",bg = WHITE).pack(padx=350,pady=50)
-
 
     def find_origin_coor(self):
         nodeList = get_variable("nodeList")

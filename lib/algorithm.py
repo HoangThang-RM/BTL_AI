@@ -1,6 +1,6 @@
 import heapq
 import copy
-DEPTH = 10
+DEPTH = 30
 
 class Way:
     def __init__(self,firstNode = '',lastNode = '',way = [],heuEN=0.0,cost=0.0):
@@ -21,10 +21,10 @@ class Way:
 #=======================================BeFS===========================================#
 
 def BeFS(pointList,startNode,endNode):
-    MO = []
     if(startNode not in pointList.keys()):
         print('Khong co start Node tuong ung voi de bai')
-        return
+        return []
+    MO = []
     visited = []
     visited.append(startNode)
     heapq.heappush(MO,pointList[startNode])
@@ -63,13 +63,10 @@ def BeFS(pointList,startNode,endNode):
 #=======================================A*===========================================#
 
 def starA(pointList,startNode,endNode):
+    if(startNode not in pointList.keys()):
+        print('Khong co start Node tuong ung voi de bai')
+        return []
 
-
-    for p in pointList.keys():
-        print(pointList[p])
-        #print(p._name + '->' + p._heuristic)
-        #for neighborNode in p._distanceTo.keys():
-        #    print(neighborNode + '==' + p._distanceTo[neighborNode])
     MO = [] #hang doi uu tien - cay nhi phan
     DONG = [] # chuoi binh thuong
     start = pointList[startNode]
@@ -103,6 +100,10 @@ def starA(pointList,startNode,endNode):
 #=======================================At===========================================#
 
 def At(pointList,startNode,endNode):
+    if(startNode not in pointList.keys()):
+        print('Khong co start Node tuong ung voi de bai')
+        return []
+    
     MO = [] #hang doi uu tien - cay nhi phan
     DONG = [] # chuoi binh thuong
     start = pointList[startNode]
@@ -134,44 +135,46 @@ def At(pointList,startNode,endNode):
 #=======================================Akt===========================================#
 
 def Akt_matrix(matrix,matrixEnd,target,height,width):
-    MO = can_move(target,target,height,width) #DS cac vi tri di tiep theo
     h = 0
     g = cal_cost(matrix,matrixEnd,height,width)
     f = h + g
-    result = {"matrix" : [[copy.deepcopy(matrix),h,g,f]],"height" : height,"width" : width, "isResult" : False,"depth" : DEPTH}
+    firstWay = {"way":target,"h":h,"g":g,"f":f}
+    MO = [[matrix,[firstWay,firstWay]]]     #[[matrix,way]]    
     depth = 0
     while(MO != []):
         depth = depth + 1
-        oldTarget = target
-        target,f,g,h = move_min(MO,h,matrix,matrixEnd,target,height,width)
-        resultMatrix = copy.deepcopy(matrix)
-        resTmp = [resultMatrix,h,g,f]
-        result["matrix"].append(resTmp)
+        newMO = []
+        h = h + 1
+        for mtx in MO:
+            if(cal_cost(mtx[0],matrixEnd,height,width) == 0): 
+                return {"matrix":matrix,"way":mtx[1],"height":height,"width":width,"isResult":True}
         
-        if(cal_cost(matrix,matrixEnd,height,width) == 0): 
-            #print('Da tim duoc ket qua')
-            result["isResult"] = True
-            break
+        for mtx in MO:
+            way = mtx[1]
+            move = can_move(way[-1]["way"],way[-2]["way"],height,width) #DS cac vi tri di tiep theo
+            newMO.extend(move_min(move,h,mtx[0],matrixEnd,way,height,width))
+            #print(mtx[0],':',mtx[1][-1]['way'])
+        MO = newMO
 
         if(depth >= DEPTH):
-            #print('Da tim',depth,'lan ko tim duoc ket qua')
             break
-        MO = can_move(target,oldTarget,height,width) #DS cac vi tri di tiep theo
     
-    return result
+    return {"matrix":matrix,"way":MO.pop(0)[1],"height":height,"width":width,"isResult":False}
 
-def move_min(MO,h,matrix,matrixEnd,target,height,width):
-    row = target[0]
-    column = target[1]
+def move_min(move,h,matrix,matrixEnd,way,height,width):
+    row = way[-1]["way"][0]
+    column = way[-1]["way"][1]
     h = h + 1
     g = 0
     f = 0
-    result = (None,None)
+    listMatrix = []
+    tmpListMatrix = []
     first = True
-    for coor in MO:
+    for coor in move:
         row_ = coor[0]
         column_ = coor[1]
         tmpMatrix = copy.deepcopy(matrix)
+        
         #swap
         tempVal = tmpMatrix[row][column]
         tmpMatrix[row][column] = tmpMatrix[row_][column_]
@@ -179,21 +182,20 @@ def move_min(MO,h,matrix,matrixEnd,target,height,width):
         
         tmpG = cal_cost(tmpMatrix,matrixEnd,height,width)
         tmpF = h + tmpG
-        if(f > tmpF or first):
-            first = False
-            f = tmpF
-            g = tmpG
-            result = coor
 
-    reI = result[0]
-    reJ = result[1]
+        
+        if(f >= tmpF or first):
+            f = tmpF
+            tmpWay = copy.deepcopy(way)
+            first = False
+            tmpWay.append({"way":coor,"h":h,"g":tmpG,"f":f})
+            tmpListMatrix.append([tmpMatrix,tmpWay,f])
     
-    #swap
-    temp = matrix[row][column]
-    matrix[row][column] = matrix[reI][reJ]
-    matrix[reI][reJ] = temp 
-    
-    return result,f,g,h
+    for mtx in tmpListMatrix:
+        if(mtx[2] == f):
+            listMatrix.append([mtx[0],mtx[1]])
+
+    return listMatrix
 
 def cal_cost(matrix,matrixEnd,height,width):
     cost = 0
@@ -236,3 +238,10 @@ def can_move(target,oldTarget,height,width):
             move.append((i,j-1))
     
     return move
+
+if __name__ == "__main__":
+    matrix = [[1,2,3],[4,5,6],[7,8,'']]
+    matrixEnd = [[1,2,3],[4,5,6],['',7,8]]
+    move = can_move((2,2),(2,2),3,3)
+
+    Akt_matrix(matrix,matrixEnd,(2,2),3,3)

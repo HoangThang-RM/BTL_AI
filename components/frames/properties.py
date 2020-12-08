@@ -37,7 +37,7 @@ class Properties(Frame):
 
         self.target_node()
 
-    def edit_name(self,e):
+    def edit_name(self,e = None):
         self._entName.config(highlightthickness=0)
         nameNode = self.varName.get() 
         
@@ -52,7 +52,7 @@ class Properties(Frame):
                 
         self.target.edit_node(name = nameNode)
 
-    def edit_heuristic(self,e):
+    def edit_heuristic(self,e = None):
         self._entHeuristic.config(highlightthickness=0)
         if(self.target == None):
             return
@@ -86,14 +86,18 @@ class Properties(Frame):
                 break
 
     def target_node(self,node = None):
+        #save old node
+        if(self.target != None):
+            self.target._canvas.itemconfig(self.target._oval, outline="black")
+            self.edit_name()
+            self.edit_heuristic()
+
         self.listChild = [] #giai phong bo nho childNode
         self._entHeuristic.config(highlightthickness=0,highlightcolor="black")
         self._entName.config(highlightthickness=0,highlightcolor="black")
         self.focus_name()
         
         #highlight node
-        if(self.target != None):
-            self.target._canvas.itemconfig(self.target._oval, outline="black")
         
         self.target = node
         if(node != None):
