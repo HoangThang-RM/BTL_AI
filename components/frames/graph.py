@@ -8,7 +8,7 @@ from lib.global_variable import set_variable,get_variable
 
 class GraphFrame(Frame):
     def __init__(self, parent):
-        Frame.__init__(self, parent,style=BGWHITE,relief=GROOVE, borderwidth=1)
+        Frame.__init__(self, parent,style=BGWHITE,relief=GROOVE, borderwidth=0)
         self._parent = parent
         self._relationship = [None,None,None]
         self.__initUI()

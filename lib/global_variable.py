@@ -5,6 +5,8 @@ def init_global_variable():
     GLOBALS_DICT["toolList"] = []
     GLOBALS_DICT["toolTarget"] = None
     GLOBALS_DICT["properties"] = None
+    GLOBALS_DICT["matrix"] = None
+    GLOBALS_DICT["tabControl"] = None
 
 def set_variable(name, value):
     try:
