@@ -56,6 +56,11 @@ class TopFrame(Frame):
         
         #Do thi cay
         if(nameTab == CAY):
+            for node in nodeList:
+                if(node._nameNode == ''):
+                    messagebox.showwarning(title=None, message="Không được để trống tên node")
+                    return
+                    
             nodeStart = self.varNodeStart.get()
             nodeGoal = []
             for item in self.varNodeEnd.get().split(","):
