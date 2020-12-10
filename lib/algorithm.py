@@ -138,39 +138,62 @@ def Akt_matrix(matrix,matrixEnd,target,height,width):
     h = 0
     g = cal_cost(matrix,matrixEnd,height,width)
     f = h + g
-    firstWay = {"way":target,"h":h,"g":g,"f":f}
-    MO = [[matrix,[firstWay,firstWay]]]     #[[matrix,way]]    
+    firstWay = {"coor":target,"h":h,"g":g,"f":f}
+    #Khởi tạo MO với ma trận ban đầu và Way
+    MO = [[matrix,[firstWay]]]  
     depth = 0
     while(MO != []):
         depth = depth + 1
         newMO = []
-        h = h + 1
         for mtx in MO:
             if(cal_cost(mtx[0],matrixEnd,height,width) == 0): 
-                return {"matrix":matrix,"way":mtx[1],"height":height,"width":width,"isResult":True}
+                return {"matrix":matrix,"listWay":mtx[1],"height":height,"width":width,"isResult":True}
         
+        #Lặp MO để tìm hướng đi tiếp theo
         for mtx in MO:
             way = mtx[1]
-            move = can_move(way[-1]["way"],way[-2]["way"],height,width) #DS cac vi tri di tiep theo
-            newMO.extend(move_min(move,h,mtx[0],matrixEnd,way,height,width))
-            #print(mtx[0],':',mtx[1][-1]['way'])
-        MO = newMO
+            newMO.extend(move(mtx[0],matrixEnd,way,h,height,width))
 
+        #Thuật toán lập nài DEPTH lần nếu vẫn chưa tìm được
+        #thông báo đã tìm depth lần vãn chưa tìm được đích
         if(depth >= DEPTH):
             break
+        
+        MO = newMO
+        h = h + 1
     
-    return {"matrix":matrix,"way":MO.pop(0)[1],"height":height,"width":width,"isResult":False}
+    return {"matrix":matrix,"listWay":MO.pop(0)[1],"height":height,"width":width,"isResult":False}
 
-def move_min(move,h,matrix,matrixEnd,way,height,width):
-    row = way[-1]["way"][0]
-    column = way[-1]["way"][1]
+#hàm chọn vị trí tiếp theo cần di chuyển
+def move(matrix,matrixEnd,way,h,height,width):
+    #vị trí ô hiện tại
+    row = way[-1]["coor"][0]
+    column = way[-1]["coor"][1]
+    #vị trí cha trc khi di chuyển đến ô hiện tại
+    if(len(way) < 2):
+        oldTarget = way[-1]["coor"]
+    else:
+        oldTarget = way[-2]["coor"]
+
     h = h + 1
     g = 0
     f = 0
     listMatrix = []
     tmpListMatrix = []
     first = True
+
+    #4 vị trí ô có thể di chuyển lên,xuống,trái,phải
+    move = [(row-1,column),(row+1,column),(row,column-1),(row,column+1)]
+
     for coor in move:
+        #nếu mà trùng với vị trí cha thì bỏ qua
+        if(coor == oldTarget):
+            continue
+        
+        #nếu toa độ ô di chuyển không đúng thì bỏ qua
+        if(coor[0] < 0 or coor[0] >= height or coor[1] < 0 or coor[1] >= width):
+            continue
+
         row_ = coor[0]
         column_ = coor[1]
         tmpMatrix = copy.deepcopy(matrix)
@@ -183,20 +206,23 @@ def move_min(move,h,matrix,matrixEnd,way,height,width):
         tmpG = cal_cost(tmpMatrix,matrixEnd,height,width)
         tmpF = h + tmpG
 
-        
+        #nếu f chưa là min thì ta đổi lại giá trị cho f
         if(f >= tmpF or first):
             f = tmpF
             tmpWay = copy.deepcopy(way)
             first = False
-            tmpWay.append({"way":coor,"h":h,"g":tmpG,"f":f})
+            #thêm vị trí vào danh sách đường đi và giá trị các hàm f,g,h
+            tmpWay.append({"coor":coor,"h":h,"g":tmpG,"f":f})
             tmpListMatrix.append([tmpMatrix,tmpWay,f])
     
+    #lọc lại những vị trí mà có giá trị bằng min
     for mtx in tmpListMatrix:
         if(mtx[2] == f):
             listMatrix.append([mtx[0],mtx[1]])
-
+    
     return listMatrix
 
+#Tính số ô không đúng so với đáp án
 def cal_cost(matrix,matrixEnd,height,width):
     cost = 0
     for i in range(height):
@@ -204,44 +230,3 @@ def cal_cost(matrix,matrixEnd,height,width):
             if(matrix[i][j] != matrixEnd[i][j] and matrixEnd[i][j] != ''):
                 cost = cost + 1
     return cost
-
-def can_move(target,oldTarget,height,width):
-    i = target[0]
-    j = target[1]
-    move = []
-    if(i == 0):
-        if((i+1,j) != oldTarget):
-            move.append((i+1,j))
-    
-    if(i == height-1):
-        if((i-1,j) != oldTarget):
-            move.append((i-1,j))
-
-    if(j == 0):
-        if((i,j+1) != oldTarget):
-            move.append((i,j+1))
-    
-    if(j == width-1):
-        if((i,j-1) != oldTarget):
-            move.append((i,j-1))
-
-    if(i > 0 and i < height-1):
-        if((i+1,j) != oldTarget):
-            move.append((i+1,j))
-        if((i-1,j) != oldTarget):
-            move.append((i-1,j))
-
-    if(j > 0 and j < width-1):
-        if((i,j+1) != oldTarget):
-            move.append((i,j+1))
-        if((i,j-1) != oldTarget):
-            move.append((i,j-1))
-    
-    return move
-
-if __name__ == "__main__":
-    matrix = [[1,2,3],[4,5,6],[7,8,'']]
-    matrixEnd = [[1,2,3],[4,5,6],['',7,8]]
-    move = can_move((2,2),(2,2),3,3)
-
-    Akt_matrix(matrix,matrixEnd,(2,2),3,3)

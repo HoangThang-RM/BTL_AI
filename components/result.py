@@ -100,12 +100,12 @@ class Result:
         width = result["width"]
         matrix = result["matrix"]
         count = 0
-        oldWay = result["way"][0]["way"]
-        result["way"].pop(0)
-        print(result["way"])
-        for way in result["way"]:
-            row = way["way"][0]
-            column = way["way"][1]
+        oldWay = result["listWay"][0]["coor"]
+        #result["way"].pop(0)
+        print(result["listWay"])
+        for way in result["listWay"]:
+            row = way["coor"][0]
+            column = way["coor"][1]
             row_ = oldWay[0]
             column_ = oldWay[1]
 
@@ -118,7 +118,7 @@ class Result:
             tempVal = matrix[row][column]
             matrix[row][column] = matrix[row_][column_]
             matrix[row_][column_] = tempVal
-            oldWay = way["way"]
+            oldWay = way["coor"]
             print(matrix)
             frmMatrix =Frame(self._cover,style=BGWHITE)
             frmMatrix.pack(side=TOP,pady=20)
