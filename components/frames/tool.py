@@ -26,7 +26,7 @@ class Tool(Frame):
         Frame.__init__(self, parent,relief=FLAT, borderwidth=5)
         self._parent = parent
         self._nameTool = nameTool
-        self._pathImgFolder = os.path.abspath(os.getcwd() + '/data/image/')
+        self._pathImgFolder = os.path.abspath(__file__ + '/../../../data/image/')
         self.__initUI(nameImg)
   
     def __initUI(self,nameImg):
