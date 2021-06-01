@@ -48,7 +48,7 @@ class GraphFrame(Frame):
         E.add_child(I,4)
         E.add_child(K,5)
 
-        H.add_child(K,11)
+        H.add_child(K,1)
         H.add_child(B,18)
 
         K.add_child(B,8)

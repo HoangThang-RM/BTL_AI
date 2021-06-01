@@ -27,7 +27,7 @@ class TopFrame(Frame):
 
         self.alg_value = StringVar()
         self.algchoosen = Combobox(self.toolFrame, state="readonly", textvariable = self.alg_value, font="Arial 12")
-        self.algchoosen["values"] = (BEFS, AT, AKT, STARA)
+        self.algchoosen["values"] = (BEFS, AT, AKT,STARA)
         self.algchoosen.current(0)
         self.algchoosen.grid(column=0,row=0,pady=2)
 
@@ -66,7 +66,7 @@ class TopFrame(Frame):
             for item in self.varNodeEnd.get().split(","):
                 nodeGoal.append(item.strip())
             
-            if(nodeStart == '' or nodeGoal == ''):
+            if(nodeStart == '' or nodeGoal == []):
                 messagebox.showwarning(title=None, message="Không được để trống điểm xuất phát và đích")
                 return
             
@@ -85,7 +85,8 @@ class TopFrame(Frame):
             elif(nameALG == AT):
                 result = At(pointList,nodeStart,nodeGoal)
             elif(nameALG == AKT):
-                result = starA(pointList,nodeStart,nodeGoal)
+                messagebox.showwarning(title=None, message="Akt chỉ sử dụng với bảng ma trận")
+                return
             elif(nameALG == STARA):
                 result = starA(pointList,nodeStart,nodeGoal)
         

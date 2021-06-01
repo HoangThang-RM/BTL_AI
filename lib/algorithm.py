@@ -22,7 +22,7 @@ class Way:
 
 def BeFS(pointList,startNode,endNode):
     if(startNode not in pointList.keys()):
-        print('Khong co start Node tuong ung voi de bai')
+        #print('Khong co start Node tuong ung voi de bai')
         return []
     MO = []
     visited = []
@@ -31,7 +31,7 @@ def BeFS(pointList,startNode,endNode):
     DONG = []
     while(len(MO) > 0):
         tmp = heapq.heappop(MO)
-        print(f'**{tmp.name}**')
+        #print(f'**{tmp.name}**')
         DONG.append(tmp.name)
         if(tmp.name in endNode):
             track = {}
@@ -51,7 +51,7 @@ def BeFS(pointList,startNode,endNode):
                 iter = track[iter]
             trueWay.append(startNode)
             trueWay.reverse()
-            print(trueWay)
+            #print(trueWay)
             return trueWay
         # neighborNodes = tmp.distanceTo.keys()
         for neighborNode in tmp.distanceTo.keys():
@@ -64,7 +64,7 @@ def BeFS(pointList,startNode,endNode):
 
 def starA(pointList,startNode,endNode):
     if(startNode not in pointList.keys()):
-        print('Khong co start Node tuong ung voi de bai')
+        #print('Khong co start Node tuong ung voi de bai')
         return []
 
     MO = [] #hang doi uu tien - cay nhi phan
@@ -74,16 +74,16 @@ def starA(pointList,startNode,endNode):
     while(len(MO) > 0):
         tmpW = heapq.heappop(MO) ## Way not Node
         
-        print(f'{tmpW._lastNode} : {tmpW._cost} --------{tmpW._heuEN}')
+        #print(f'{tmpW._lastNode} : {tmpW._cost} --------{tmpW._heuEN}')
         if(tmpW._lastNode in DONG):
             continue
         if(tmpW._lastNode in endNode):
-            print(f'{tmpW._firstNode}'+ tmpW._lastNode)
+            #print(f'{tmpW._firstNode}'+ tmpW._lastNode)
             return tmpW._way
         DONG.append(tmpW._lastNode)
         for neighborNode in pointList[tmpW._lastNode].distanceTo.keys():
             myFloat = tmpW._cost + pointList[tmpW._lastNode].distanceTo[neighborNode]
-            print(f'{myFloat}' + f' == {pointList[tmpW._lastNode].distanceTo[neighborNode]}')
+            #print(f'{myFloat}' + f' == {pointList[tmpW._lastNode].distanceTo[neighborNode]}')
             newWay = tmpW._way.copy()
             pushItem = Way(
                 tmpW._firstNode+tmpW._lastNode,
@@ -93,15 +93,15 @@ def starA(pointList,startNode,endNode):
                 myFloat
             )
             heapq.heappush(MO,pushItem)
-        for x in MO:
-            print(x._firstNode, ' - ', x._lastNode , ' - ' , x._heuEN , ' - ' , x._cost)
+        #for x in MO:
+            #print(x._firstNode, ' - ', x._lastNode , ' - ' , x._heuEN , ' - ' , x._cost)
     return []
 
 #=======================================At===========================================#
 
 def At(pointList,startNode,endNode):
     if(startNode not in pointList.keys()):
-        print('Khong co start Node tuong ung voi de bai')
+        #print('Khong co start Node tuong ung voi de bai')
         return []
     
     MO = [] #hang doi uu tien - cay nhi phan
@@ -111,16 +111,16 @@ def At(pointList,startNode,endNode):
     while(len(MO) > 0):
         tmpW = heapq.heappop(MO) ## Way not Node
         
-        print(f'{tmpW._lastNode} : {tmpW._cost} --------{tmpW._heuEN}')
+        #print(f'{tmpW._lastNode} : {tmpW._cost} --------{tmpW._heuEN}')
         if(tmpW._lastNode in DONG):
             continue
         if(tmpW._lastNode in endNode):
-            print(f'{tmpW._firstNode}'+ tmpW._lastNode)
+            #print(f'{tmpW._firstNode}'+ tmpW._lastNode)
             return tmpW._way
         DONG.append(tmpW._lastNode)
         for neighborNode in pointList[tmpW._lastNode].distanceTo.keys():
             myFloat = tmpW._cost + pointList[tmpW._lastNode].distanceTo[neighborNode]
-            print(f'{myFloat}' + f' == {pointList[tmpW._lastNode].distanceTo[neighborNode]}')
+            #print(f'{myFloat}' + f' == {pointList[tmpW._lastNode].distanceTo[neighborNode]}')
             newWay = tmpW._way.copy()
             pushItem = Way(
                 tmpW._firstNode+tmpW._lastNode,

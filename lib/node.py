@@ -12,8 +12,8 @@ class Node():
         self._x = x
         self._y = y
         self._diameter = diameter
-
-        self.__initUI(nameNode,x,y,diameter,color)
+        if(self._canvas != None):
+            self.__initUI(nameNode,x,y,diameter,color)
 
     def __initUI(self,nameNode,x,y,diameter,color):
         self._oval = self._canvas.create_oval(x,y,x+diameter,y+diameter, width="2", fill=color)
@@ -86,7 +86,9 @@ class Node():
     def add_child(self,node,cost):
         coorParent = (self._x,self._y)
         coorChild = (node._x,node._y)
-        arrow, txtCost = self.create_arrow(coorParent,coorChild,cost)
+        arrow, txtCost = None,None
+        if(self._canvas != None):
+            arrow, txtCost = self.create_arrow(coorParent,coorChild,cost)
 
         #add to chilNodes
         child = {"Node":node,"cost":cost,"arrow":arrow,"txtCost":txtCost}   
